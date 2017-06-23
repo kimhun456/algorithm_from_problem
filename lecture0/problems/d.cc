@@ -1,3 +1,7 @@
+#include <iostream>
+#include <ctime>
+
+using namespace std;
 
 class Stack {
 
@@ -25,33 +29,65 @@ public:
 		tail->prev = head;
 	}
 	~Stack() {
+
+		while (!isEmpty()) {
+			Node *popNode = head->next;
+			head->next = popNode->next;
+			popNode->next->prev = head;
+			size--;
+			delete popNode;
+		}
 		delete head;
 		delete tail;
 	}
 
 	void push(int n) {
-		Node *newNode = new Node(n);
+		Node *insertNode = new Node(n);
 		Node *nextNode = head->next;
-		nextNode->prev = newNode;
-		newNode->next = nextNode;
-		head->next = newNode;
-		newNode->prev = head;
+		nextNode->prev = insertNode;
+		insertNode->next = nextNode;
+		head->next = insertNode;
+		insertNode->prev = head;
 		size++;
 	}
 
 	int pop() {
-		if (size > 0) {
-			Node *popNode = head->next;
-			head->next = popNode->next;
-			popNode->next->prev = head;
-			int tmp = popNode->data;
-			delete popNode;
-			size--;
-			return tmp;
-		}
+		Node *popNode = head->next;
+		head->next = popNode->next;
+		popNode->next->prev = head;
+		int tmp = popNode->data;
+		delete popNode;
+		size--;
+		return tmp;
 	}
 
 	bool isEmpty() {
 		return size == 0;
 	}
+
 };
+
+
+int main() {
+
+	clock_t begin, end;
+	int max = 10000000;
+	
+	//start
+	begin = clock();
+	
+	Stack s;
+	for (int i = 0; i < max; i++) {
+		s.push(i);
+	}
+	for (int i = 0; i < max; i++) {
+		s.pop();
+	}
+	// end
+	end = clock();
+
+	cout << (double)((end - begin) / (double)CLOCKS_PER_SEC) << "s" << endl;
+
+
+	return 0;
+}
